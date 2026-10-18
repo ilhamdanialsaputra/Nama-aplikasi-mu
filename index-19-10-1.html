@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHYSORA - Membaca Teknologi Melalui Fisika</title>
+<meta name="description" content="PHYSORA: ruang belajar sains untuk membaca teknologi sehari-hari melalui fisika. Proyek Kelompok 6.">
+<meta name="theme-color" content="#0A192F">
+<meta property="og:site_name" content="PHYSORA">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="id_ID">
+<meta property="og:title" content="PHYSORA - Membaca Teknologi Melalui Fisika">
+<meta property="og:description" content="PHYSORA: ruang belajar sains untuk membaca teknologi sehari-hari melalui fisika. Proyek Kelompok 6.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['"Plus Jakarta Sans"', 'sans-serif'],
+        sans: ['Inter', 'sans-serif']
+      },
+      colors: {
+        navy: { DEFAULT: '#0A192F', deep: '#0B1528' },
+        accent: { DEFAULT: '#0EA5E9', dark: '#0284C7' },
+        mist: '#F1F5F9'
+      },
+      boxShadow: {
+        soft: '0 1px 2px rgba(10,25,47,.06), 0 8px 24px -8px rgba(10,25,47,.14)',
+        lift: '0 2px 4px rgba(10,25,47,.08), 0 18px 40px -12px rgba(10,25,47,.28)'
+      }
+    }
+  }
+}
+</script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html { scroll-behavior: auto; }
+  body { font-family: 'Inter', sans-serif; background: #F8FAFC; color: #0F172A; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4, .font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
+  [data-lucide] { width: 1.25rem; height: 1.25rem; stroke-width: 1.75; }
+
+  /* Pages: visibility is controlled only by class toggling in JS */
+  .page { display: none; }
+  .page.is-active { display: block; }
+  .page.is-entering { animation: pageIn .5s ease-out both; }
+  @keyframes pageIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Morph overlay */
+  #morph {
+    position: fixed; inset: 0; z-index: 90; pointer-events: none; display: none;
+    background: radial-gradient(circle at 50% 40%, #12305a 0%, #0A192F 55%, #0B1528 100%);
+  }
+  #morph .ring { background: none; border: 0; box-shadow: none; outline: 0; position: absolute; left: 50%; top: 50%; width: 88px; height: 88px; margin: -44px 0 0 -44px; color: #0EA5E9; opacity: .9; }
+  #morph .ring svg { display: block; background: none; width: 100%; height: 100%; stroke-width: 1.25; animation: spin 1.4s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Header / menu */
+  .nav-link { position: relative; color: #CBD5E1; font-weight: 500; font-size: .9rem; padding: .5rem .25rem; transition: color .2s; }
+  .nav-link::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #0EA5E9; transform: scaleX(0); transform-origin: left; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+  .nav-link:hover, .nav-link[aria-current="page"] { color: #fff; }
+  .nav-link:hover::after, .nav-link[aria-current="page"]::after { transform: scaleX(1); }
+  #mobile-menu { max-height: 0; overflow: hidden; transition: max-height .4s cubic-bezier(.2,.8,.2,1); }
+  #mobile-menu.open { max-height: 420px; }
+  .burger-line { display: block; width: 20px; height: 2px; background: #fff; border-radius: 2px; transition: transform .3s, opacity .2s; }
+  #burger[aria-expanded="true"] .l1 { transform: translateY(7px) rotate(45deg); }
+  #burger[aria-expanded="true"] .l2 { opacity: 0; }
+  #burger[aria-expanded="true"] .l3 { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Hero */
+  .hero-bg {
+    background:
+      radial-gradient(900px 420px at 80% 10%, rgba(14,165,233,.22), transparent 60%),
+      linear-gradient(180deg, #0A192F 0%, #0B1528 100%);
+  }
+  .grid-lines {
+    background-image: linear-gradient(rgba(148,163,184,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.08) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  .electron { cursor: pointer; outline: none; }
+  .electron:hover, .electron:focus-visible { filter: drop-shadow(0 0 6px #0EA5E9); }
+
+  /* Buttons & cards */
+  .btn { display: inline-flex; align-items: center; gap: .5rem; font-weight: 600; font-size: .92rem; padding: .8rem 1.25rem; border-radius: .75rem; transition: transform .2s, box-shadow .2s, background .2s, color .2s; cursor: pointer; }
+  .btn:active { transform: translateY(1px) scale(.99); }
+  .btn-primary { background: #0EA5E9; color: #04121f; box-shadow: 0 8px 20px -8px rgba(14,165,233,.7); }
+  .btn-primary:hover { background: #38BDF8; }
+  .btn-ghost { background: transparent; color: #E2E8F0; border: 1px solid rgba(226,232,240,.3); }
+  .btn-ghost:hover { background: rgba(255,255,255,.08); }
+  .btn-outline { border: 1px solid #CBD5E1; color: #0A192F; background: #fff; }
+  .btn-outline:hover { border-color: #0EA5E9; color: #0284C7; }
+  .card { background: #fff; border: 1px solid #E2E8F0; border-radius: 1rem; box-shadow: 0 1px 2px rgba(10,25,47,.06), 0 8px 24px -8px rgba(10,25,47,.14); transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s; }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 2px 4px rgba(10,25,47,.08), 0 18px 40px -12px rgba(10,25,47,.28); }
+  .ratio169 { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: linear-gradient(135deg, #0A192F, #123a63); }
+  .ratio169 img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s, transform .8s; }
+  .ratio169 img.loaded { opacity: 1; }
+  .ratio169 img.diagram { object-fit: contain; background: #fff; padding: .5rem; }
+  .card:hover .ratio169 img.diagram.loaded { transform: none; }
+  .card:hover .ratio169 img.loaded { transform: scale(1.04); }
+  .fig-note, .prose-physora p.fig-note { font-size: .65rem; line-height: 1.4; color: #64748B; margin: .5rem 0 0 !important; }
+  .img-credit { font-size: .65rem; color: #64748B; line-height: 1.4; }
+  .img-credit a { text-decoration: underline; text-underline-offset: 2px; }
+  .chip { display: inline-flex; align-items: center; gap: .4rem; font-size: .8rem; font-weight: 600; padding: .5rem .9rem; border-radius: 999px; border: 1px solid #CBD5E1; background: #fff; color: #334155; cursor: pointer; transition: all .2s; }
+  .chip:hover { border-color: #0EA5E9; color: #0284C7; }
+  .chip[aria-pressed="true"] { background: #0A192F; color: #fff; border-color: #0A192F; }
+  .eyebrow { font-family: 'Plus Jakarta Sans', sans-serif; font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #0284C7; }
+
+  /* Article typography */
+  .prose-physora p { font-size: 1.05rem; line-height: 1.9; color: #334155; margin: 0 0 1.25rem; }
+  .prose-physora h2 { font-size: 1.65rem; font-weight: 800; color: #0A192F; margin: 3rem 0 1rem; padding-left: 1rem; border-left: 4px solid #0EA5E9; line-height: 1.25; }
+  .prose-physora h3 { font-size: 1.2rem; font-weight: 700; color: #0A192F; margin: 2rem 0 .6rem; }
+  .prose-physora ul { margin: 0 0 1.25rem 0; padding: 0; list-style: none; }
+  .prose-physora ul li { position: relative; padding-left: 1.5rem; margin-bottom: .85rem; font-size: 1.05rem; line-height: 1.85; color: #334155; }
+  .prose-physora ul li::before { content: ''; position: absolute; left: 0; top: .8rem; width: .55rem; height: .55rem; background: #0EA5E9; border-radius: 2px; transform: rotate(45deg); }
+  .prose-physora ul.refs li::before { background: #94A3B8; }
+  .prose-physora ul.refs li { font-size: .95rem; line-height: 1.7; }
+  .summary-box { background: #fff; border: 1px solid #BAE6FD; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 2px rgba(10,25,47,.06), 0 8px 24px -8px rgba(10,25,47,.14); }
+  .summary-box ul { margin: 0; }
+  .summary-box li:last-child { margin-bottom: 0; }
+
+  /* Table */
+  .log-table th { background: #0A192F; color: #fff; text-align: left; font-size: .8rem; letter-spacing: .04em; padding: .85rem 1rem; white-space: nowrap; }
+  .log-table td { padding: .95rem 1rem; font-size: .88rem; vertical-align: top; border-top: 1px solid #E2E8F0; color: #334155; line-height: 1.6; }
+  .log-table tr:nth-child(even) td { background: #F8FAFC; }
+
+  /* Peta topik: slider mobile */
+  .topic-section { background: #F0F9FF; border-top: 1px solid #E0F2FE; border-bottom: 1px solid #E0F2FE; }
+  .topic-slider { position: relative; display: flex; gap: .875rem; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scrollbar-width: none; -ms-overflow-style: none; margin: 2rem -1.25rem 0; padding: .25rem 1.25rem 1rem; scroll-padding-inline: 1.25rem; }
+  .topic-slider::-webkit-scrollbar { display: none; }
+  .topic-slider::after { content: ''; flex: 0 0 1px; }
+  .topic-card { flex: 0 0 78%; max-width: 20rem; scroll-snap-align: start; display: flex; flex-direction: column; background: #fff; border: 1px solid #BAE6FD; border-radius: 1rem; padding: 1.25rem; color: #0F172A; box-shadow: 0 1px 2px rgba(15,23,42,.05), 0 6px 16px -8px rgba(2,132,199,.18); transition: transform .15s ease, border-color .2s, box-shadow .2s; -webkit-tap-highlight-color: transparent; }
+  .topic-card:active { transform: scale(.98); border-color: #0284C7; }
+  @media (hover: hover) { .topic-card:hover { transform: scale(.98); border-color: #0284C7; box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 10px 22px -10px rgba(2,132,199,.3); } }
+  .topic-card-top { display: flex; align-items: center; justify-content: space-between; color: #0284C7; margin-bottom: .875rem; }
+  .topic-card-top svg { stroke: currentColor; }
+  .topic-card-top svg:first-child { width: 1.75rem; height: 1.75rem; }
+  .topic-card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 1.05rem; line-height: 1.3; color: #0F172A; }
+  .topic-card-desc { margin-top: .4rem; font-size: .875rem; line-height: 1.55; color: #475569; }
+  .topic-dots { display: flex; justify-content: center; gap: .5rem; margin-top: .25rem; }
+  .topic-dot { position: relative; width: .5rem; height: .5rem; border: 0; padding: 0; border-radius: 999px; background: #BAE6FD; cursor: pointer; transition: width .25s ease, background .25s ease; }
+  .topic-dot::after { content: ''; position: absolute; inset: -.6rem -.3rem; }
+  .topic-dot[aria-current="true"] { width: 1.5rem; background: #0284C7; }
+  @media (min-width: 640px) {
+    .topic-slider { display: grid; grid-template-columns: repeat(3, 1fr); overflow: visible; margin-inline: 0; padding-inline: 0; }
+    .topic-slider::after { display: none; }
+    .topic-card { max-width: none; }
+    .topic-dots { display: none; }
+  }
+
+  :focus-visible { outline: 2px solid #0EA5E9; outline-offset: 3px; border-radius: 6px; }
+  h1:focus { outline: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<!-- ========== GLOBAL HEADER ========== -->
+<header class="sticky top-0 z-50 bg-navy border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+    <a href="#/" data-link class="flex items-center gap-2.5 text-white" aria-label="PHYSORA - Beranda">
+      <span class="text-accent"><i data-lucide="atom" class="!w-8 !h-8"></i></span>
+      <span class="font-display font-extrabold tracking-[.18em] text-lg">PHYSORA</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-7" aria-label="Navigasi utama">
+      <a href="#/" data-link class="nav-link">Beranda</a>
+      <a href="#/jelajah" data-link class="nav-link">Jelajah</a>
+      <a href="#/tentang" data-link class="nav-link">Tentang Kami</a>
+      <a href="#/referensi" data-link class="nav-link">Referensi</a>
+    </nav>
+    <button id="burger" class="md:hidden w-11 h-11 rounded-lg border border-white/25 grid place-items-center" aria-label="Buka menu" aria-expanded="false" aria-controls="mobile-menu">
+      <span class="grid gap-[5px]"><span class="burger-line l1"></span><span class="burger-line l2"></span><span class="burger-line l3"></span></span>
+    </button>
+  </div>
+  <div id="mobile-menu" class="md:hidden bg-navy-deep border-t border-white/10">
+    <nav class="px-5 py-3 grid" aria-label="Navigasi seluler">
+      <a href="#/" data-link class="nav-link py-3 border-b border-white/5">Beranda</a>
+      <a href="#/jelajah" data-link class="nav-link py-3 border-b border-white/5">Jelajah</a>
+      <a href="#/tentang" data-link class="nav-link py-3 border-b border-white/5">Tentang Kami</a>
+      <a href="#/referensi" data-link class="nav-link py-3">Referensi</a>
+    </nav>
+  </div>
+</header>
+
+<main id="app" class="flex-1">
+
+<!-- ========== HALAMAN 1: BERANDA ========== -->
+<section id="page-home" class="page" data-title="PHYSORA - Membaca Teknologi Melalui Fisika" data-description="PHYSORA mengajak kamu membaca teknologi sehari-hari melalui fisika: kamera ponsel, Wi-Fi, hingga layar OLED, dijelaskan dengan bahasa sederhana.">
+  <div class="hero-bg relative overflow-hidden">
+    <div class="grid-lines absolute inset-0 opacity-60"></div>
+    <div class="relative max-w-6xl mx-auto px-5 pt-16 pb-20 md:pt-24 md:pb-28 grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <p class="eyebrow !text-accent mb-5">Sains di balik layar</p>
+        <h1 tabindex="-1" class="font-display font-extrabold text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.08] tracking-tight">MEMBACA TEKNOLOGI MELALUI FISIKA</h1>
+        <p class="mt-6 text-slate-300 text-lg leading-relaxed max-w-lg">Teknologi punya bahasa. Fisika membantu kita membacanya, dari satu jepretan foto hingga sinyal yang menembus dinding.</p>
+        <div class="mt-9 flex flex-wrap gap-3">
+          <a href="#/jelajah" data-link class="btn btn-primary">Mulai menjelajah <i data-lucide="arrow-right"></i></a>
+          <a href="#/tentang" data-link class="btn btn-ghost">Tentang proyek</a>
+        </div>
+      </div>
+      <div>
+        <div class="rounded-3xl border border-white/10 bg-navy-deep/80 p-4 shadow-lift">
+          <svg id="orbit" viewBox="0 0 400 400" class="w-full h-auto" role="img" aria-label="Ilustrasi orbit atom interaktif. Klik elektron untuk melihat topik.">
+            <defs>
+              <radialGradient id="nuc" cx="50%" cy="50%" r="50%">
+                <stop offset="0" stop-color="#7DD3FC"/><stop offset="1" stop-color="#0EA5E9"/>
+              </radialGradient>
+              <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+                <stop offset="0" stop-color="#0EA5E9" stop-opacity=".35"/><stop offset="1" stop-color="#0EA5E9" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle cx="200" cy="200" r="120" fill="url(#halo)"/>
+            <g fill="none" stroke="#38BDF8" stroke-opacity=".55" stroke-width="1.5">
+              <g transform="rotate(0 200 200)"><ellipse cx="200" cy="200" rx="165" ry="60"/></g>
+              <g transform="rotate(60 200 200)"><ellipse cx="200" cy="200" rx="165" ry="60"/></g>
+              <g transform="rotate(120 200 200)"><ellipse cx="200" cy="200" rx="165" ry="60"/></g>
+            </g>
+            <g transform="rotate(0 200 200)"><circle class="electron" data-i="0" r="9" fill="#0EA5E9" stroke="#E0F2FE" stroke-width="2" tabindex="0" role="button" aria-label="Elektron: Cahaya dan Optik"/></g>
+            <g transform="rotate(60 200 200)"><circle class="electron" data-i="1" r="9" fill="#38BDF8" stroke="#E0F2FE" stroke-width="2" tabindex="0" role="button" aria-label="Elektron: Gelombang dan Komunikasi"/></g>
+            <g transform="rotate(120 200 200)"><circle class="electron" data-i="2" r="9" fill="#7DD3FC" stroke="#E0F2FE" stroke-width="2" tabindex="0" role="button" aria-label="Elektron: Elektronika"/></g>
+            <circle cx="200" cy="200" r="26" fill="url(#nuc)"/>
+            <path d="M178 200 q5.5 -14 11 0 t11 0 t11 0 t11 0" fill="none" stroke="#04121f" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <div class="flex items-center justify-between gap-3 px-2 pt-2 pb-1">
+            <p id="orbit-caption" class="text-slate-300 text-sm" aria-live="polite">Klik salah satu elektron untuk memilih topik.</p>
+            <a id="orbit-go" href="#/jelajah" data-link class="hidden shrink-0 text-accent text-sm font-semibold hover:text-sky-300">Buka <i data-lucide="arrow-up-right" class="inline !w-4 !h-4"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-5 py-16">
+    <p class="eyebrow">Tentang gagasannya</p>
+    <h2 class="font-display font-extrabold text-2xl md:text-3xl text-navy mt-2">Dari rasa penasaran menjadi pemahaman.</h2>
+    <div class="grid md:grid-cols-2 gap-5 mt-8">
+      <div class="card p-6">
+        <div class="flex items-center gap-3 text-accent-dark"><i data-lucide="lightbulb"></i><h3 class="font-display font-bold text-navy">Fisika ada di sekitar kita</h3></div>
+        <p class="mt-3 text-slate-600 leading-relaxed">Physora membantu orang memahami fisika melalui perkembangan teknologi. Mulai dari foto di ponsel hingga jaringan nirkabel, setiap perangkat menyimpan cerita tentang cahaya, gelombang, energi, dan materi.</p>
+      </div>
+      <div class="card p-6">
+        <div class="flex items-center gap-3 text-accent-dark"><i data-lucide="book-open"></i><h3 class="font-display font-bold text-navy">Belajar, lalu bereksplorasi</h3></div>
+        <p class="mt-3 text-slate-600 leading-relaxed">Tujuan kami adalah membuat fisika terasa lebih dekat dan mudah dipahami, sekaligus mengajak pembaca menyelidiki prinsip di balik teknologi yang mereka jumpai sehari-hari.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-section">
+    <div class="max-w-6xl mx-auto px-5 py-14">
+      <p class="eyebrow">Peta topik</p>
+      <h2 class="font-display font-extrabold text-2xl md:text-3xl text-navy mt-2">Jelajahi lewat bidang fisika</h2>
+      <div class="topic-slider" id="topic-map">
+        <a href="#/jelajah" data-link data-topic="optik" class="topic-card">
+          <span class="topic-card-top"><i data-lucide="aperture"></i><i data-lucide="arrow-right"></i></span>
+          <span class="topic-card-title">Cahaya &amp; Optik</span>
+          <span class="topic-card-desc">Membedah rahasia pembiasan, lensa, dan piksel kamera.</span>
+        </a>
+        <a href="#/jelajah" data-link data-topic="gelombang" class="topic-card">
+          <span class="topic-card-top"><i data-lucide="wifi"></i><i data-lucide="arrow-right"></i></span>
+          <span class="topic-card-title">Gelombang &amp; Komunikasi</span>
+          <span class="topic-card-desc">Membongkar cara kerja Wi-Fi, sinyal radio, dan frekuensi.</span>
+        </a>
+        <a href="#/jelajah" data-link data-topic="elektronika" class="topic-card">
+          <span class="topic-card-top"><i data-lucide="microchip"></i><i data-lucide="arrow-right"></i></span>
+          <span class="topic-card-title">Elektronika</span>
+          <span class="topic-card-desc">Melihat pergerakan elektron pada transistor dan layar OLED.</span>
+        </a>
+      </div>
+      <div class="topic-dots" id="topic-dots" role="group" aria-label="Indikator kartu"></div>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-5 py-16">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="eyebrow">Mulai dari sini</p>
+        <h2 class="font-display font-extrabold text-2xl md:text-3xl text-navy mt-2">Artikel pilihan.</h2>
+      </div>
+      <a href="#/jelajah" data-link class="btn btn-outline">Semua artikel <i data-lucide="arrow-right"></i></a>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6 mt-8">
+      <article class="card overflow-hidden flex flex-col">
+        <div class="ratio169"><img data-commons="smartphone camera lens" alt="Kamera ponsel dengan beberapa lensa"></div>
+        <div class="p-5 flex flex-col flex-1">
+          <p class="eyebrow !text-[.68rem]">Cahaya &amp; Optik</p>
+          <h3 class="font-display font-bold text-navy text-lg leading-snug mt-2">Dari Cahaya Senja ke Piksel: Perjalanan Rahasia di Balik Satu Jepretan Foto</h3>
+          <p class="text-slate-600 text-sm leading-relaxed mt-2">Ikuti perjalanan cahaya dari lensa, sensor, hingga menjadi data piksel pada foto senja.</p>
+          <p class="fig-note">Kamera ponsel dengan beberapa lensa.</p>
+          <p class="img-credit mt-3" data-credit></p>
+          <a href="#/artikel/1" data-link class="btn btn-primary mt-4 self-start">Baca artikel <i data-lucide="arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="card overflow-hidden flex flex-col">
+        <div class="ratio169"><img data-commons="File:Wifi.png|File:Wifi icon.svg|File:Wi-Fi icon.svg|File:Wi-Fi Logo.svg|Wi-Fi symbol|File:Wi-Fi.svg" alt="Simbol Wi-Fi"></div>
+        <div class="p-5 flex flex-col flex-1">
+          <p class="eyebrow !text-[.68rem]">Gelombang &amp; Komunikasi</p>
+          <h3 class="font-display font-bold text-navy text-lg leading-snug mt-2">Sinyal Tak Kasatmata: Bagaimana Wi-Fi “Menerbangkan” Videomu ke Ponsel?</h3>
+          <p class="text-slate-600 text-sm leading-relaxed mt-2">Gelombang elektromagnetik membawa kode 0 dan 1 dari router ke ponselmu tanpa kabel.</p>
+          <p class="fig-note">Simbol Wi-Fi.</p><p class="img-credit mt-3" data-credit></p>
+          <a href="#/artikel/2" data-link class="btn btn-primary mt-4 self-start">Baca artikel <i data-lucide="arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="card overflow-hidden flex flex-col">
+        <div class="ratio169"><img data-commons="OLED display" alt="Layar OLED menyala"></div>
+        <div class="p-5 flex flex-col flex-1">
+          <p class="eyebrow !text-[.68rem]">Elektronika</p>
+          <h3 class="font-display font-bold text-navy text-lg leading-snug mt-2">Titik-Titik Kecil yang Menyala Sendiri: Rahasia Hitam Pekat di Layar OLED</h3>
+          <p class="text-slate-600 text-sm leading-relaxed mt-2">Setiap piksel menyalakan dirinya sendiri lewat elektroluminesensi, sehingga hitam benar-benar pekat.</p>
+          <p class="fig-note">Contoh layar OLED yang sedang menyala.</p>
+          <p class="img-credit mt-3" data-credit></p>
+          <a href="#/artikel/3" data-link class="btn btn-primary mt-4 self-start">Baca artikel <i data-lucide="arrow-right"></i></a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ========== JELAJAH (daftar artikel) ========== -->
+<section id="page-jelajah" class="page" data-title="Jelajah Artikel - PHYSORA" data-description="Jelajahi artikel PHYSORA tentang fisika di balik kamera ponsel, Wi-Fi, dan layar OLED, lengkap dengan filter topik.">
+  <div class="bg-mist border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-5 py-14">
+      <p class="eyebrow">Jelajah</p>
+      <h1 tabindex="-1" class="font-display font-extrabold text-3xl md:text-4xl text-navy mt-2">Pilih topik, baca ceritanya.</h1>
+      <p class="mt-3 text-slate-600 max-w-2xl">Setiap artikel mengurai satu teknologi sehari-hari menjadi langkah-langkah fisika yang mudah diikuti.</p>
+      <div class="flex flex-wrap gap-2 mt-7" id="filters" role="group" aria-label="Filter topik">
+        <button class="chip" data-filter="all" aria-pressed="true">Semua</button>
+        <button class="chip" data-filter="optik" aria-pressed="false"><i data-lucide="aperture" class="!w-4 !h-4"></i>Cahaya &amp; Optik</button>
+        <button class="chip" data-filter="gelombang" aria-pressed="false"><i data-lucide="radio" class="!w-4 !h-4"></i>Gelombang &amp; Komunikasi</button>
+        <button class="chip" data-filter="elektronika" aria-pressed="false"><i data-lucide="cpu" class="!w-4 !h-4"></i>Elektronika</button>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-6xl mx-auto px-5 py-12">
+    <div class="grid md:grid-cols-3 gap-6" id="article-grid">
+      <article class="card overflow-hidden flex flex-col" data-cat="optik">
+        <div class="ratio169"><img data-commons="smartphone camera lens" alt="Kamera ponsel dengan beberapa lensa"></div>
+        <div class="p-5 flex flex-col flex-1">
+          <p class="eyebrow !text-[.68rem]">Cahaya &amp; Optik</p>
+          <h3 class="font-display font-bold text-navy text-lg leading-snug mt-2">Dari Cahaya Senja ke Piksel: Perjalanan Rahasia di Balik Satu Jepretan Foto</h3>
+          <p class="text-slate-600 text-sm leading-relaxed mt-2">Ikuti perjalanan cahaya dari lensa, sensor, hingga menjadi data piksel pada foto senja.</p>
+          <p class="fig-note">Kamera ponsel dengan beberapa lensa.</p>
+          <p class="img-credit mt-3" data-credit></p>
+          <a href="#/artikel/1" data-link class="btn btn-primary mt-4 self-start">Baca artikel <i data-lucide="arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="card overflow-hidden flex flex-col" data-cat="gelombang">
+        <div class="ratio169"><img data-commons="File:Wifi.png|File:Wifi icon.svg|File:Wi-Fi icon.svg|File:Wi-Fi Logo.svg|Wi-Fi symbol|File:Wi-Fi.svg" alt="Simbol Wi-Fi"></div>
+        <div class="p-5 flex flex-col flex-1">
+          <p class="eyebrow !text-[.68rem]">Gelombang &amp; Komunikasi</p>
+          <h3 class="font-display font-bold text-navy text-lg leading-snug mt-2">Sinyal Tak Kasatmata: Bagaimana Wi-Fi “Menerbangkan” Videomu ke Ponsel?</h3>
+          <p class="text-slate-600 text-sm leading-relaxed mt-2">Gelombang elektromagnetik membawa kode 0 dan 1 dari router ke ponselmu tanpa kabel.</p>
+          <p class="fig-note">Simbol Wi-Fi.</p><p class="img-credit mt-3" data-credit></p>
+          <a href="#/artikel/2" data-link class="btn btn-primary mt-4 self-start">Baca artikel <i data-lucide="arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="card overflow-hidden flex flex-col" data-cat="elektronika">
+        <div class="ratio169"><img data-commons="OLED display" alt="Layar OLED menyala"></div>
+        <div class="p-5 flex flex-col flex-1">
+          <p class="eyebrow !text-[.68rem]">Elektronika</p>
+          <h3 class="font-display font-bold text-navy text-lg leading-snug mt-2">Titik-Titik Kecil yang Menyala Sendiri: Rahasia Hitam Pekat di Layar OLED</h3>
+          <p class="text-slate-600 text-sm leading-relaxed mt-2">Setiap piksel menyalakan dirinya sendiri lewat elektroluminesensi, sehingga hitam benar-benar pekat.</p>
+          <p class="fig-note">Contoh layar OLED yang sedang menyala.</p>
+          <p class="img-credit mt-3" data-credit></p>
+          <a href="#/artikel/3" data-link class="btn btn-primary mt-4 self-start">Baca artikel <i data-lucide="arrow-right"></i></a>
+        </div>
+      </article>
+    </div>
+    <div id="empty-state" class="hidden card p-8 text-center max-w-xl mx-auto mt-4">
+      <span class="inline-grid place-items-center w-12 h-12 rounded-xl bg-navy text-accent mb-4"><i data-lucide="telescope"></i></span>
+      <h3 class="font-display font-bold text-navy text-lg">Artikel topik ini sedang disiapkan</h3>
+      <p class="text-slate-600 text-sm mt-2">Belum ada artikel untuk topik ini. Sementara itu, lihat artikel yang sudah tersedia.</p>
+      <button class="btn btn-primary mt-5" data-filter-reset>Tampilkan semua artikel</button>
+    </div>
+  </div>
+</section>
+
+<!-- ========== HALAMAN 2: TENTANG KAMI ========== -->
+<section id="page-tentang" class="page" data-title="Tentang Kami - PHYSORA" data-description="Kenali tujuan proyek PHYSORA, Tim Pengembang Kelompok 6, serta pernyataan dan log penggunaan AI.">
+  <div class="bg-mist border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-5 py-14">
+      <p class="eyebrow">Di balik Physora</p>
+      <h1 tabindex="-1" class="font-display font-extrabold text-3xl md:text-4xl text-navy mt-2">Tentang Kami</h1>
+      <p class="mt-3 text-slate-600 max-w-2xl">Physora membantu orang memahami fisika melalui perkembangan teknologi yang ada di sekitar kita.</p>
+    </div>
+  </div>
+  <div class="max-w-6xl mx-auto px-5 py-14">
+    <div class="grid md:grid-cols-2 gap-5">
+      <div class="card p-6">
+        <div class="flex items-center gap-3 text-accent-dark"><i data-lucide="target"></i><h2 class="font-display font-bold text-navy text-lg">Tujuan kami</h2></div>
+        <p class="mt-3 text-slate-600 leading-relaxed">Edukasi: menjelaskan konsep fisika tanpa bahasa yang terasa rumit. Eksplorasi: mengajak pembaca menyelidiki prinsip di balik teknologi dan fenomena sehari-hari. Naskah ini ditujukan sebagai titik awal belajar, bukan pengganti sumber akademik.</p>
+      </div>
+      <div class="card p-6">
+        <div class="flex items-center gap-3 text-accent-dark"><i data-lucide="users"></i><h2 class="font-display font-bold text-navy text-lg">Untuk siapa?</h2></div>
+        <p class="mt-3 text-slate-600 leading-relaxed">Untuk pelajar dan mahasiswa yang mencari cara belajar fisika yang lebih dekat dengan keseharian, serta penggemar teknologi yang ingin memahami cara kerja perangkat modern.</p>
+      </div>
+    </div>
+
+    <div class="mt-16">
+      <p class="eyebrow">Kelompok 6</p>
+      <h2 class="font-display font-extrabold text-2xl md:text-3xl text-navy mt-2">Tim Pengembang</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-8">
+        <div class="card p-6">
+          <div class="w-14 h-14 rounded-2xl bg-navy text-accent grid place-items-center font-display font-extrabold text-lg">IN</div>
+          <h3 class="font-display font-bold text-navy text-lg mt-4">Irfani Nur Huda</h3>
+          <p class="eyebrow !text-[.68rem] mt-1">Project Manager</p>
+          <p class="text-slate-600 text-sm leading-relaxed mt-3"><strong class="text-navy">Tugas:</strong> Menentukan nama website, tujuan, target pengguna, koordinator semua tugas.</p>
+        </div>
+        <div class="card p-6">
+          <div class="w-14 h-14 rounded-2xl bg-navy text-accent grid place-items-center font-display font-extrabold text-lg">PD</div>
+          <h3 class="font-display font-bold text-navy text-lg mt-4">Puspita Dwi A.P.M</h3>
+          <p class="eyebrow !text-[.68rem] mt-1">Desainer UI</p>
+          <p class="text-slate-600 text-sm leading-relaxed mt-3"><strong class="text-navy">Tugas:</strong> Bikin dummy/wireframe website di Canva, atur warna, logo, layout.</p>
+        </div>
+        <div class="card p-6">
+          <div class="w-14 h-14 rounded-2xl bg-navy text-accent grid place-items-center font-display font-extrabold text-lg">DA</div>
+          <h3 class="font-display font-bold text-navy text-lg mt-4">Dinda Aisyah Erini</h3>
+          <p class="eyebrow !text-[.68rem] mt-1">Prompt Engineer / Developer</p>
+          <p class="text-slate-600 text-sm leading-relaxed mt-3"><strong class="text-navy">Tugas:</strong> Menyusun dan menyempurnakan prompt ke Claude, merakit kode HTML/CSS/JS, memperbaiki bug, publikasi github.</p>
+        </div>
+        <div class="card p-6">
+          <div class="w-14 h-14 rounded-2xl bg-navy text-accent grid place-items-center font-display font-extrabold text-lg">NR</div>
+          <h3 class="font-display font-bold text-navy text-lg mt-4">Nova Riyanti</h3>
+          <p class="eyebrow !text-[.68rem] mt-1">Content Writer</p>
+          <p class="text-slate-600 text-sm leading-relaxed mt-3"><strong class="text-navy">Tugas:</strong> Riset dan menulis 3 artikel.</p>
+        </div>
+        <div class="card p-6">
+          <div class="w-14 h-14 rounded-2xl bg-navy text-accent grid place-items-center font-display font-extrabold text-lg">ST</div>
+          <h3 class="font-display font-bold text-navy text-lg mt-4">Stepani</h3>
+          <p class="eyebrow !text-[.68rem] mt-1">Researcher &amp; Fact-Checker</p>
+          <p class="text-slate-600 text-sm leading-relaxed mt-3"><strong class="text-navy">Tugas:</strong> Memverifikasi seluruh fakta/angka dari AI, memastikan web akhir sudah sesuai dengan sumber kredibel. Memastikan gaya bahasa sesuai sasaran pembaca.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16">
+      <p class="eyebrow">Transparansi</p>
+    <h2 class="font-display font-bold text-xl text-navy mt-2 mb-3">Penggunaan AI secara transparan</h2>
+    <div class="card p-6 text-slate-600 leading-relaxed text-[.95rem]">
+      Naskah ketiga artikel ditulis oleh anggota tim. AI dipakai untuk membantu menyusun kode website, memformat naskah menjadi halaman, dan menyusun ringkasan konsep. Seluruh keluaran AI tetap ditinjau, diuji, dan diputuskan oleh anggota tim.
+    </div>
+
+    <h2 class="font-display font-bold text-xl text-navy mt-12 mb-5">Log penggunaan AI</h2>
+    <div class="card overflow-x-auto">
+      <table class="log-table w-full min-w-[720px] border-collapse">
+        <thead>
+          <tr><th>No</th><th>Tahap</th><th>Tujuan prompt</th><th>Alat AI</th><th>Hasil</th><th>Peninjauan oleh tim</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Pengembangan website</td><td>Membuat kode website satu halaman (SPA) dengan navigasi, tema, dan animasi.</td><td>Claude (Anthropic)</td><td>Berkas index.html berisi struktur halaman, gaya, dan skrip navigasi.</td><td>Menguji navigasi, tombol kembali, menu ponsel, dan tampilan di layar kecil.</td></tr>
+          <tr><td>2</td><td>Pemformatan naskah</td><td>Menata teks mentah artikel menjadi paragraf dan subjudul tanpa mengubah kalimat.</td><td>Claude (Anthropic)</td><td>Tiga halaman artikel terstruktur dengan subjudul.</td><td>Membandingkan teks halaman dengan naskah asli, kalimat demi kalimat.</td></tr>
+          <tr><td>3</td><td>Ringkasan konsep</td><td>Menyusun butir ringkasan konsep di akhir tiap artikel dari isi naskah.</td><td>Claude (Anthropic)</td><td>Tiga kotak ringkasan konsep.</td><td>Memeriksa kesesuaian setiap butir dengan isi artikel dan sumber.</td></tr>
+          <tr><td>4</td><td>Gambar</td><td>Mengambil gambar berlisensi bebas dari Wikimedia Commons lewat kode.</td><td>Claude (Anthropic)</td><td>Skrip yang memilih gambar dan menampilkan kreator serta lisensi.</td><td>Memeriksa gambar yang tampil relevan dan lisensinya sesuai.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== HALAMAN 3: REFERENSI ========== -->
+<section id="page-referensi" class="page" data-title="Referensi - PHYSORA" data-description="Daftar sumber referensi yang menjadi dasar artikel-artikel PHYSORA.">
+  <div class="bg-mist border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-5 py-14">
+      <p class="eyebrow">Sumber</p>
+      <h1 tabindex="-1" class="font-display font-extrabold text-3xl md:text-4xl text-navy mt-2">Referensi</h1>
+      <p class="mt-3 text-slate-600 max-w-2xl">Daftar berikut memuat sumber yang menjadi dasar setiap artikel dan gambar di PHYSORA.</p>
+    </div>
+  </div>
+  <div class="max-w-6xl mx-auto px-5 py-14">
+    <h2 class="font-display font-bold text-xl text-navy mb-5">Sumber per artikel</h2>
+    <div class="grid md:grid-cols-2 gap-5">
+      <div class="card p-6">
+        <p class="eyebrow !text-[.68rem]">Artikel 1 · Kamera ponsel</p>
+        <ul class="mt-3 grid gap-3 text-sm text-slate-600">
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://www.nobelprize.org/prizes/physics/1921/summary/" target="_blank" rel="noopener noreferrer">Nobel Prize Outreach: Nobel Prize in Physics 1921 (Albert Einstein)</a></li>
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://hyperphysics.phy-astr.gsu.edu/hbase/hframe.html" target="_blank" rel="noopener noreferrer">HyperPhysics, Georgia State University: Photoelectric Effect dan Refraction</a></li>
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://www.cambridgeincolour.com/tutorials/digital-camera-sensors.htm" target="_blank" rel="noopener noreferrer">Cambridge in Colour: Digital Camera Sensors</a></li>
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://www.wiley.com/" target="_blank" rel="noopener noreferrer">Halliday, Resnick &amp; Walker: Fundamentals of Physics (Wiley)</a></li>
+        </ul>
+      </div>
+      <div class="card p-6">
+        <p class="eyebrow !text-[.68rem]">Artikel 2 · Wi-Fi</p>
+        <ul class="mt-3 grid gap-3 text-sm text-slate-600">
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://hyperphysics.phy-astr.gsu.edu/hbase/hframe.html" target="_blank" rel="noopener noreferrer">HyperPhysics, Georgia State University: Electromagnetic Spectrum</a></li>
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://www.wiley.com/" target="_blank" rel="noopener noreferrer">Halliday, Resnick &amp; Walker: Fundamentals of Physics, bab Gelombang Elektromagnetik (Wiley)</a></li>
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://www.pearson.com/" target="_blank" rel="noopener noreferrer">Giancoli: Physics, Principles with Applications (Pearson)</a></li>
+        </ul>
+      </div>
+      <div class="card p-6">
+        <p class="eyebrow !text-[.68rem]">Artikel 3 · Layar OLED</p>
+        <ul class="mt-3 grid gap-3 text-sm text-slate-600">
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://doi.org/10.1063/1.98799" target="_blank" rel="noopener noreferrer">Tang &amp; VanSlyke (1987): Organic electroluminescent diodes, Applied Physics Letters</a></li>
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://hyperphysics.phy-astr.gsu.edu/hbase/hframe.html" target="_blank" rel="noopener noreferrer">HyperPhysics, Georgia State University: Light Emitting Diodes (LED)</a></li>
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://www.nobelprize.org/prizes/chemistry/2000/summary/" target="_blank" rel="noopener noreferrer">Nobel Prize Outreach: Nobel Prize in Chemistry 2000 (Conductive Polymers)</a></li>
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://www.wiley.com/" target="_blank" rel="noopener noreferrer">Halliday, Resnick &amp; Walker: Fundamentals of Physics, bab Fisika Kuantum dan Atom (Wiley)</a></li>
+        </ul>
+      </div>
+      <div class="card p-6">
+        <p class="eyebrow !text-[.68rem]">Gambar</p>
+        <ul class="mt-3 grid gap-3 text-sm text-slate-600">
+          <li><a class="font-semibold text-navy hover:text-accent-dark underline underline-offset-2" href="https://commons.wikimedia.org/" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></li>
+          <li class="leading-relaxed">Semua foto dimuat langsung dari Wikimedia Commons. Hanya berkas berlisensi Creative Commons (tanpa batasan non-komersial) atau domain publik yang ditampilkan. Nama kreator dan lisensi tercantum di bawah setiap gambar.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========== HALAMAN 4: DETAIL ARTIKEL 1 ========== -->
+<section id="page-artikel-1" class="page" data-title="Dari Cahaya Senja ke Piksel - PHYSORA" data-description="Bagaimana cahaya senja berubah menjadi piksel? Pelajari pembiasan lensa, apertur, efek fotolistrik, dan filter Bayer pada kamera ponsel.">
+  <div class="max-w-3xl mx-auto px-5 pt-10 pb-20">
+    <nav aria-label="Breadcrumb" class="text-sm text-slate-500 flex flex-wrap items-center gap-2">
+      <a href="#/" data-link class="hover:text-accent-dark">Beranda</a><span aria-hidden="true">/</span>
+      <a href="#/jelajah" data-link class="hover:text-accent-dark">Jelajah</a><span aria-hidden="true">/</span>
+      <span class="text-slate-700">Cahaya &amp; Optik</span>
+    </nav>
+    <p class="eyebrow mt-8">Physora – Fisika di Genggamanmu</p>
+    <h1 tabindex="-1" class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-navy leading-[1.12] mt-3">Dari Cahaya Senja ke Piksel: Perjalanan Rahasia di Balik Satu Jepretan Foto</h1>
+    <figure class="mt-8">
+      <div class="ratio169 rounded-2xl shadow-lift"><img data-commons="smartphone camera lens" alt="Kamera ponsel dengan beberapa lensa"></div>
+      <p class="fig-note">Kamera ponsel dengan beberapa lensa.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+    </figure>
+
+    <div class="prose-physora mt-10">
+      <h2>Teknologinya: Kamera Ponsel</h2>
+      <p>Coba bayangkan kamu sedang duduk di warung kopi saat senja. Lalu kamu melihat langit Bekasi berubah jingga, dan tiba-tiba kamu ingin mengabadikannya. Kamu mengambil ponselmu, membuka aplikasi kamera, lalu menekan tombol kamera pada layar, dan klik. Dalam sekejap, langit yang megah itu sudah tersimpan rapi di dalam galerimu.</p>
+      <p>Tapi tunggu dulu. Langit tidak masuk ke dalam ponselmu. Melainkan yang masuk hanyalah cahaya. Lalu bagaimana cahaya, sesuatu yang tak punya bentuk dan tak bisa dipegang, dan berubah menjadi gambar yang bisa kamu kirim di sosial mediamu? Jawabannya adalah rangkaian peristiwa fisika yang terjadi dalam hitungan sepersekian detik.</p>
+
+      <h2>Fisika di Baliknya</h2>
+      <h3>Langkah 1: Cahaya Dikumpulkan oleh Lensa</h3>
+      <p>Setiap benda yang kamu lihat memantulkan cahaya ke segala arah. Kalau kamera hanya punya lubang kosong, cahaya dari satu titik objek akan tersebar dan hasilnya menjadi buram. Di sinilah lensa bekerja.</p>
+      <p>Lensa terbuat dari kaca atau plastik bening yang melengkungkan arah cahaya. Peristiwa ini disebut dengan pembiasan (refraksi). Analogi gampangnya gini saat kamu berlari dari aspal ke pasir pantai, kecepatanmu berubah dan arah lari ikut membelok. Begitupun dengan cahaya mengalami hal serupa ketika berpindah dari udara ke kaca. Lengkungan lensa diatur supaya semua sinar dari satu titik objek berkumpul kembali di satu titik pada sensor. Hasilnya adalah gambar yang tajam, atau yang biasa kita sebut dengan fokus. Saat kamu mengetuk layar untuk memilih objek, ponsel sebenarnya menggeser posisi lensa sedikit demi sedikit sampai menemukan titik kumpul yang pas.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="convex lens focusing light|lens refraction light rays|magnifying glass lens" alt="Lensa cembung membiaskan dan mengumpulkan cahaya"></div>
+        <p class="fig-note">Lensa cembung membelokkan cahaya hingga berkumpul.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Langkah 2: Jumlah Cahaya Diatur oleh Bukaan</h3>
+      <p>Sebelum mencapai sensor, cahaya akan melewati lubang kecil yang disebut dengan apertur. Ia seperti pupil mata: melebar di tempat gelap dan menyempit di tempat terang. Jika terlalu banyak cahaya membuat akan foto putih menyilaukan, tapi jika terlalu sedikit membuatnya gelap gulita. Itulah sebabnya angka seperti “f/1.8” tertera di spesifikasi ponsel. Angka kecil ini berarti bukaan lebar dan lebih banyak cahaya yang masuk.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="camera lens aperture blades|aperture diaphragm lens|lens iris diaphragm" alt="Bukaan (apertur) lensa kamera dengan bilah diafragma"></div>
+        <p class="fig-note">Bilah diafragma yang membentuk lubang bukaan lensa.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Langkah 3: Foton Menabrak Sensor</h3>
+      <p>Sekarang sampailah kita pada bintang utamanya yakni sensor gambar. Di dalam sensor gambar terdapat jutaan kotak mungil bernama piksel. Ponsel 50 megapiksel berarti ada sekitar 50 juta kotak yang tersusun rapi berbentuk seperti ubin raksasa.</p>
+      <p>Cahaya sebenarnya terdiri dari butiran energi super kecil yang bernama foton. Setiap pikselnya berfungsi seperti ember kecil di tengah hujan dan foton adalah tetesan airnya. Semakin terang suatu bagian objek, semakin banyak foton yang akan jatuh ke dalam ember itu.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="image sensor CMOS|CMOS sensor close up|digital camera sensor" alt="Sensor gambar digital"></div>
+        <p class="fig-note">Sensor gambar digital berisi jutaan piksel.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Langkah 4: Efek Fotolistrik, Cahaya Jadi Listrik</h3>
+      <p>Bagian ini yang paling ajaib. Sensor terbuat dari silikon, bahan semikonduktor yang sama dengan chip komputer. Ketika foton menumbuk silikon dengan energi yang cukup, ia mampu melepaskan elektron dari atomnya. Peristiwa ini dinamakan dengan efek fotolistrik, penjelasan yang membawa Albert Einstein meraih Nobel Fisika 1921.</p>
+      <p>Elektron yang terlepas ditampung di setiap piksel. Foton banyak berarti elektron banyak, dan muatan listrik yang terkumpul pun besar. Dengan begitu, terang-gelapnya cahaya telah diterjemahkan menjadi besar-kecilnya muatan listrik. Sebuah piksel kini “tahu” seberapa terang bagian gambar yang diterimanya.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="photoelectric effect diagram|photoelectric effect electrons emitted|photoelectric effect" alt="Ilustrasi efek fotolistrik: foton melepaskan elektron"></div>
+        <p class="fig-note">Foton melepaskan elektron dari bahan (efek fotolistrik).</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Langkah 5: Dari Hitam-Putih Menjadi Berwarna</h3>
+      <p>Ada satu masalah yaitu piksel hanya mengukur jumlah cahaya, bukan warnanya. Solusinya cerdik. Di atas setiap piksel dipasang filter mungil berwarna merah, hijau, atau biru, tersusun dalam pola yang disebut filter Bayer. Piksel berfilter merah hanya menangkap cahaya merah, dan seterusnya. Hijau sengaja dibuat lebih banyak karena mata manusia paling peka terhadap warna itu.</p>
+      <p>Mirip seperti mozaik, ponsel kemudian menebak warna asli tiap titik dengan membandingkan piksel-piksel tetangganya. Proses tebak-menebak ini dapat dilakukan prosesor dalam sekejap.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="Bayer pattern on sensor|Bayer filter|Bayer filter mosaic" alt="Pola filter warna Bayer pada sensor gambar"></div>
+        <p class="fig-note">Filter warna merah, hijau, dan biru di atas piksel sensor.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h2>Mengapa Ini Penting</h2>
+      <h3>Penutup: Fisika yang Selalu Ada di Saku</h3>
+      <p>Tiap kali kamu memotret senja, ada pembiasan oleh lensa, foton yang berjatuhan layaknya hujan, efek fotolistrik di silikon, dan pengolahan angka yang cepat. Semua itu berlangsung tanpa kamu sadari.</p>
+      <p>Yang menarik, teknologi ini tidak lahir dari ruang kosong. Ia tumbuh dari rasa penasaran para fisikawan tentang sifat cahaya dan perilaku elektron, pertanyaan yang pada zamannya terdengar sangat abstrak. Tanpa pemahaman itu, tak akan ada kamera ponsel, pencitraan medis, ataupun teleskop luar angkasa yang memotret galaksi jauh. Jadi lain kali kamu menekan tombol rana, ingatlah bahwa kamu sedang memegang laboratorium fisika mini.</p>
+
+      <h2>Ringkasan Konsep</h2>
+      <div class="summary-box">
+        <ul>
+          <li><strong>Pembiasan (refraksi):</strong> lensa melengkungkan cahaya agar berkumpul di satu titik pada sensor sehingga gambar fokus.</li>
+          <li><strong>Apertur:</strong> lubang kecil yang mengatur jumlah cahaya; angka f yang kecil berarti bukaan lebar.</li>
+          <li><strong>Foton dan piksel:</strong> foton jatuh ke piksel seperti tetesan hujan ke ember.</li>
+          <li><strong>Efek fotolistrik:</strong> foton melepaskan elektron di silikon, mengubah terang-gelap menjadi muatan listrik.</li>
+          <li><strong>Filter Bayer:</strong> filter merah, hijau, dan biru memberi warna pada data piksel.</li>
+        </ul>
+      </div>
+
+      <h2>Referensi</h2>
+      <ul class="refs">
+        <li>Halliday, D., Resnick, R., &amp; Walker, J. Fundamentals of Physics (bab Optik Geometris dan Fisika Kuantum). Wiley.</li>
+        <li>Nobel Prize Outreach. “The Nobel Prize in Physics 1921: Albert Einstein.” nobelprize.org.</li>
+        <li>HyperPhysics, Georgia State University. “Photoelectric Effect” dan “Refraction.” hyperphysics.phy-astr.gsu.edu.</li>
+        <li>Cambridge in Colour. “Digital Camera Sensors.” cambridgeincolour.com.</li>
+      </ul>
+    </div>
+
+    <div class="mt-12 pt-8 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
+      <a href="#/jelajah" data-link class="btn btn-outline"><i data-lucide="arrow-left"></i> Kembali ke Jelajah</a>
+      <a href="#/artikel/2" data-link class="btn btn-primary">Artikel berikutnya <i data-lucide="arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== DETAIL ARTIKEL 2 ========== -->
+<section id="page-artikel-2" class="page" data-title="Sinyal Tak Kasatmata - PHYSORA" data-description="Pelajari bagaimana Wi-Fi mengirim video lewat gelombang elektromagnetik, apa itu modulasi, dan mengapa sinyal melemah di balik dinding.">
+  <div class="max-w-3xl mx-auto px-5 pt-10 pb-20">
+    <nav aria-label="Breadcrumb" class="text-sm text-slate-500 flex flex-wrap items-center gap-2">
+      <a href="#/" data-link class="hover:text-accent-dark">Beranda</a><span aria-hidden="true">/</span>
+      <a href="#/jelajah" data-link class="hover:text-accent-dark">Jelajah</a><span aria-hidden="true">/</span>
+      <span class="text-slate-700">Gelombang &amp; Komunikasi</span>
+    </nav>
+    <p class="eyebrow mt-8">Physora – Fisika di Genggamanmu</p>
+    <h1 tabindex="-1" class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-navy leading-[1.12] mt-3">Sinyal Tak Kasatmata: Bagaimana Wi-Fi “Menerbangkan” Videomu ke Ponsel?</h1>
+    <figure class="mt-8">
+      <div class="ratio169 rounded-2xl shadow-lift"><img data-commons="File:Wifi.png|File:Wifi icon.svg|File:Wi-Fi icon.svg|File:Wi-Fi Logo.svg|Wi-Fi symbol|File:Wi-Fi.svg" alt="Simbol Wi-Fi"></div>
+      <p class="fig-note">Simbol Wi-Fi.</p><figcaption class="img-credit mt-2" data-credit></figcaption>
+        </figure>
+
+    <div class="prose-physora mt-10">
+      <h2>Teknologinya: Wi-Fi</h2>
+      <p>Bayangkan ketika kamu sedang asik rebahan di kasur, menonton video favorit di ponsel. Router ada di ruang tamu, terhalang dinding dan satu pintu. Tidak ada kabel yang menyambung ke ponselmu, video mengalir mulus dan tidak pernah tersendat. Tapi ketika kamu pindah ke kamar mandi videonya mulai patah-patah, lalu muncul lingkaran putar yang menyebalkan.</p>
+      <p>Apa yang sebenarnya “terbang” di udara itu? Jawabannya bukan sihir, melainkan gelombang elektromagnetik, hasil dari kerja sama antara listrik dan magnet.</p>
+
+      <h2>Fisika di Baliknya</h2>
+      <h3>Langkah 1: Listrik yang Bergetar Menciptakan Gelombang</h3>
+      <p>Fisika modern punya fakta menarik yakni ketika muatan listrik bergerak bolak-balik dengan cepat, ia akan memancarkan gelombang ke sekitarnya. James Clerk Maxwell meramalkan hal ini pada abad ke-19, dan Heinrich Hertz membuktikannya lewat eksperimen.</p>
+      <p>Bayangkan kamu mengayunkan ujung tali panjang ke atas-bawah. Getaran di tanganmu akan merambat sebagai gelombang sepanjang tali. Di dalam router, elektron di sebuah batang logam (antena) digetarkan jutaan hingga milyaran kali per detik. Getarannya merambat ke udara sebagai gelombang elektromagnetik. Wi-Fi umumnya memakai frekuensi 2,4 GHz atau 5 GHz, yang artinya antena bergetar 2,4 atau 5 milyar kali dalam satu detik.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="dipole antenna radiation|electromagnetic wave propagation|radio antenna transmitting" alt="Antena memancarkan gelombang elektromagnetik"></div>
+        <p class="fig-note">Antena memancarkan gelombang elektromagnetik.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Langkah 2: Gelombang Cahaya yang Tak Terlihat</h3>
+      <p>Gelombang Wi-Fi sebenarnya merupakan saudara dekat dari cahaya tampak. Keduanya sama-sama gelombang elektromagnetik dan merambat dengan kecepatan sama, sekitar 300.000 kilometer per detik. Bedanya hanya pada frekuensi. Mata kita hanya peka pada frekuensi rentang tertentu, sehingga gelombang Wi-Fi lolos dari penglihatan. Dari sisi fisika, router sebenarnya adalah lampu senter yang menyala dengan “warna” yang tak bisa kita lihat langsung dengan mata.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="electromagnetic spectrum|electromagnetic spectrum diagram|visible light spectrum" alt="Spektrum gelombang elektromagnetik"></div>
+        <p class="fig-note">Spektrum gelombang elektromagnetik.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Langkah 3: Menitipkan Data pada Gelombang</h3>
+      <p>Gelombang kosong belum membawa pesan. Agar bisa mengangkut informasi, gelombang harus “dimodifikasi”. Prosesnya ini dinamakan modulasi.</p>
+      <p>Analogi paling mudahnya adalah seperti sandi senter. Kalau kamu menyalakan dan mematikan senter dengan pola tertentu, temanmu di seberang lapangan bisa membaca pesanmu. Router juga melakukan hal serupa, tetapi jauh lebih halus. Ia sedikit mengubah tinggi gelombang (amplitudo) atau menggeser posisi puncaknya (fase) mengikuti pola angka 0 dan 1 dari data video. Gelombang yang tadinya polos kini menjadi “kurir” yang membawa kode rahasia.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="amplitude modulation carrier signal|frequency modulation carrier signal|AM FM modulation" alt="Ilustrasi modulasi gelombang pembawa"></div>
+        <p class="fig-note">Gelombang pembawa yang dimodulasi untuk membawa data.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Langkah 4: Ponselmu Menangkap dan Menerjemahkan</h3>
+      <p>Gelombang yang sampai ke ponsel akan menggetarkan elektron di antena kecil di dalamnya. Getaran yang dihasilkan sangat lemah, jauh lebih lemah daripada saat dipancarkan, akan tetapi pola yang tersimpan di dalamnya masih utuh. Ini seperti senar gitar yang ikut bergetar ketika senar lain di dekatnya dipetik. Peristiwa ini disebut dengan resonansi.</p>
+      <p>Rangkaian elektronik di ponsel lalu memperkuat sinyal tadi dan akan membaca ulang pola amplitudo dan fasenya, mengubahnya kembali menjadi deretan 0 dan 1. Dari situ, prosesor merangkai angka-angka itu menjadi gambar dan suara video.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="smartphone motherboard|mobile phone circuit board|smartphone disassembled" alt="Papan sirkuit ponsel tempat sinyal diproses"></div>
+        <p class="fig-note">Papan sirkuit ponsel.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Langkah 5: Mengapa Sinyal Melemah dan Tersendat?</h3>
+      <p>Di sinilah fisika menjelaskan keluhan sehari-hari kita.</p>
+      <ul>
+        <li><strong>Jarak.</strong> Gelombang menyebar ke segala arah, seperti riak air yang membesar saat dilempar batu. Makin jauh dari pusat, maka energinya semakin tipis.</li>
+        <li><strong>Penghalang.</strong> Dinding beton dan lemari besi menyerap atau memantulkan gelombang. Air juga menyerapnya dengan baik, itulah sebabnya tubuh manusia (yang sebagian besar air) bisa ikut melemahkan sinyal Wi-Fi.</li>
+        <li><strong>Perbedaan frekuensi.</strong> Gelombang 2,4 GHz lebih tahan menembus dinding, tetapi jalurnya lebih ramai karena dipakai banyak perangkat. Gelombang 5 GHz lebih lega dan cepat, tetapi lebih mudah terhenti oleh penghalang. Bayangkan jalan tol lebar yang mudah macet total jika ada rintangan, melawan jalan kampung sempit yang ramai tapi bisa diterobos.</li>
+        <li><strong>Gangguan.</strong> Microwave dapur, Bluetooth, dan router tetangga bisa berbicara di frekuensi yang sama, seperti banyak orang bicara bersamaan dalam satu ruangan.</li>
+      </ul>
+      <h2>Mengapa Ini Penting</h2>
+      <h3>Penutup: Fisika yang Menembus Dinding</h3>
+      <p>Setiap kali kamu membuka media sosial lewat Wi-Fi, ada elektron yang bergetar milyaran kali per detik, gelombang yang menembus dinding, dan sandi 0 dan 1 yang menumpang di punggung gelombang itu. Semuanya berpijak pada gagasan para fisikawan abad ke-19 yang saat itu sibuk meneliti listrik dan magnet, tanpa membayangkan ponsel.</p>
+      <p>Pemahaman tentang gelombang elektromagnetik itu kini menopang bukan hanya Wi-Fi, tetapi juga sinyal seluler, GPS, radio, hingga komunikasi satelit. Jadi, jika lain kali videomu tersendat di kamar mandi, kamu tahu itu bukan sekadar “sinyal jelek”. Itu merupakan fisika yang sedang bekerja, dan bisa kamu siasati dengan memindahkan posisi router ke tengah rumah.</p>
+
+      <h2>Ringkasan Konsep</h2>
+      <div class="summary-box">
+        <ul>
+          <li><strong>Gelombang elektromagnetik:</strong> muatan listrik yang bergetar cepat memancarkan gelombang; Wi-Fi memakai frekuensi 2,4 GHz atau 5 GHz.</li>
+          <li><strong>Saudara cahaya:</strong> gelombang Wi-Fi dan cahaya tampak sama-sama gelombang elektromagnetik, hanya berbeda frekuensi.</li>
+          <li><strong>Modulasi:</strong> data 0 dan 1 dititipkan lewat perubahan amplitudo atau fase gelombang.</li>
+          <li><strong>Resonansi:</strong> antena ponsel ikut bergetar sehingga pola sinyal dapat dibaca kembali.</li>
+          <li><strong>Sinyal melemah:</strong> dipengaruhi jarak, penghalang, perbedaan frekuensi, dan gangguan.</li>
+        </ul>
+      </div>
+
+      <h2>Referensi</h2>
+      <ul class="refs">
+        <li>Halliday, D., Resnick, R., &amp; Walker, J. Fundamentals of Physics (bab Gelombang Elektromagnetik). Wiley.</li>
+        <li>Giancoli, D. C. Physics: Principles with Applications. Pearson.</li>
+        <li>HyperPhysics, Georgia State University. “Electromagnetic Spectrum.” hyperphysics.phy-astr.gsu.edu.</li>
+      </ul>
+    </div>
+
+    <div class="mt-12 pt-8 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
+      <a href="#/jelajah" data-link class="btn btn-outline"><i data-lucide="arrow-left"></i> Kembali ke Jelajah</a>
+      <a href="#/artikel/3" data-link class="btn btn-primary">Artikel berikutnya <i data-lucide="arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== DETAIL ARTIKEL 3 ========== -->
+<section id="page-artikel-3" class="page" data-title="Rahasia Hitam Pekat di Layar OLED - PHYSORA" data-description="Mengapa warna hitam di layar OLED terlihat pekat? Pelajari elektroluminesensi, lubang elektron, serta cara OLED mengatur warna dan kecerahan.">
+  <div class="max-w-3xl mx-auto px-5 pt-10 pb-20">
+    <nav aria-label="Breadcrumb" class="text-sm text-slate-500 flex flex-wrap items-center gap-2">
+      <a href="#/" data-link class="hover:text-accent-dark">Beranda</a><span aria-hidden="true">/</span>
+      <a href="#/jelajah" data-link class="hover:text-accent-dark">Jelajah</a><span aria-hidden="true">/</span>
+      <span class="text-slate-700">Elektronika</span>
+    </nav>
+    <p class="eyebrow mt-8">Physora – Fisika di Genggamanmu</p>
+    <h1 tabindex="-1" class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-navy leading-[1.12] mt-3">Titik-Titik Kecil yang Menyala Sendiri: Rahasia Hitam Pekat di Layar OLED</h1>
+    <figure class="mt-8">
+      <div class="ratio169 rounded-2xl shadow-lift"><img data-commons="OLED display" alt="Layar OLED menyala"></div>
+      <p class="fig-note">Contoh layar OLED yang sedang menyala.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+    </figure>
+
+    <div class="prose-physora mt-10">
+      <h2>Teknologinya: Layar OLED</h2>
+      <p>Ketika kamu sedang menonton video langit malam di ponsel baru berlayar OLED, di kamar yang gelap. Anehnya, bagian langit yang hitam terlihat benar-benar hitam, tidak keabu-abuan seperti layar ponsel lama berlayar LCD. Bintang-bintangnya tampak menyala tajam di tengah kegelapan yang pekat.</p>
+      <p>Bagaimana layar bisa “mematikan” bagian gambar dengan sempurna? Jawabannya ada pada cara OLED menghasilkan cahaya: setiap titik di layar adalah lampu mungil yang menyalakan dirinya sendiri.</p>
+
+      <h2>Fisika di Baliknya</h2>
+      <h3>Langkah 1: Layar yang Tidak Perlu Lampu Belakang</h3>
+      <p>LCD bekerja dengan bantuan lampu latar yang terus menyala di bagian belakang layar. Cahaya dari lampu tersebut kemudian diatur oleh lapisan kristal cair untuk menentukan tingkat kecerahan setiap piksel. Karena cahaya latar tidak dapat dimatikan sepenuhnya, masih ada sedikit cahaya yang lolos sehingga warna hitam pada layar LCD sering terlihat agak keabu-abuan.</p>
+      <p>Sementara itu, OLED (Organic Light-Emitting Diode) memiliki cara kerja yang berbeda. Teknologi ini tidak memerlukan lampu latar karena setiap piksel dapat menghasilkan cahayanya sendiri. Piksel dapat dinyalakan atau dimatikan secara independen sesuai kebutuhan. Ketika sebuah piksel dimatikan, tidak ada cahaya yang dipancarkan sama sekali, sehingga layar mampu menampilkan warna hitam yang lebih pekat dan tingkat kontras yang lebih tinggi.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="LCD screen pixels close up|LCD display macro|LCD display backlight" alt="Piksel layar LCD diperbesar"></div>
+        <p class="fig-note">Contoh layar LCD.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Langkah 2: Sandwich Material Organik</h3>
+      <p>Setiap piksel OLED tersusun atas beberapa lapisan yang sangat tipis. Pada bagian tengahnya terdapat material organik, yaitu senyawa kimia yang berbasis karbon. Istilah "organik" dalam konteks ini mengacu pada struktur kimianya, bukan pada produk organik seperti yang sering dijumpai dalam bidang pangan. Lapisan organik tersebut berada di antara dua elektroda, yaitu elektroda yang menyuplai elektron bermuatan negatif dan elektroda yang menghasilkan muatan positif atau disebut lubang (hole).</p>
+      <p>Saat tegangan listrik diberikan, elektron dan lubang bergerak dari elektroda yang berbeda menuju lapisan organik di tengah. Pertemuan kedua muatan tersebut memicu pelepasan energi dalam bentuk cahaya, sehingga piksel dapat memancarkan warna yang diinginkan.</p>
+      <h3>Langkah 3: Pertemuan yang Memancarkan Cahaya</h3>
+      <p>Dalam OLED, dikenal istilah lubang (hole), yaitu keadaan ketika suatu posisi yang seharusnya ditempati elektron menjadi kosong. Untuk mempermudah pemahaman, bayangkan deretan kursi yang hampir penuh tetapi masih ada satu kursi kosong. Ketika seseorang berpindah untuk mengisi kursi tersebut, posisi kursi kosong seolah-olah bergeser ke tempat lain. Dalam dunia fisika, kekosongan elektron ini diperlakukan sebagai muatan positif yang dapat bergerak.</p>
+      <p>Saat OLED bekerja, elektron dan lubang bergerak menuju lapisan organik di tengah. Ketika elektron mengisi lubang tersebut, elektron berpindah ke tingkat energi yang lebih rendah. Perpindahan ini menyebabkan pelepasan energi yang kemudian dipancarkan dalam bentuk foton atau partikel cahaya. Semakin besar perbedaan tingkat energi yang dilalui, semakin besar pula energi cahaya yang dihasilkan.</p>
+      <p>Fenomena terbentuknya cahaya akibat aliran listrik ini disebut elektroluminesensi. Berbeda dengan lampu pijar yang menghasilkan cahaya melalui pemanasan filamen, OLED memancarkan cahaya secara langsung dari proses elektronik di dalam materialnya. Karena tidak memerlukan proses pemanasan yang signifikan, teknologi ini dapat bekerja dengan penggunaan energi yang lebih efisien.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="OLED lighting panel|light emitting diode glowing|organic light emitting diode" alt="Panel OLED yang memancarkan cahaya"></div>
+        <p class="fig-note">Cahaya dihasilkan langsung oleh bahan pemancar cahaya.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Langkah 4: Dari Mana Warna Berasal?</h3>
+      <p>Warna cahaya yang dihasilkan OLED bergantung pada energi foton yang dipancarkan. Semakin besar energi yang dilepaskan, cahaya akan cenderung berada pada spektrum biru, sedangkan energi yang lebih rendah menghasilkan cahaya yang mengarah ke warna merah. Oleh karena itu, setiap warna pada OLED menggunakan material organik yang berbeda agar dapat menghasilkan tingkat energi yang sesuai dengan warna yang diinginkan.</p>
+      <p>Untuk membentuk berbagai warna pada layar, setiap piksel terdiri atas tiga subpiksel, yaitu merah (red), hijau (green), dan biru (blue). Intensitas cahaya dari ketiga subpiksel tersebut dapat diatur secara mandiri sehingga menghasilkan beragam kombinasi warna. Sebagai contoh, perpaduan cahaya merah dan hijau akan menghasilkan warna kuning, sedangkan kombinasi ketiga warna dengan intensitas maksimum akan menghasilkan warna putih.</p>
+      <p>Dengan prinsip pencampuran warna ini, layar OLED mampu menampilkan jutaan variasi warna yang terlihat tajam dan akurat di mata pengguna.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="RGB subpixels screen macro|subpixels close up display|pixel RGB LCD microscope" alt="Subpiksel merah, hijau, dan biru pada layar"></div>
+        <p class="fig-note">Subpiksel merah, hijau, dan biru pada layar.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Langkah 5: Mengatur Terang-Gelap</h3>
+      <p>Kecerahan pada setiap sub piksel OLED bergantung pada besar arus listrik yang diberikan. Semakin kecil arus yang mengalir, semakin sedikit elektron dan lubang yang berinteraksi, sehingga jumlah foton yang dihasilkan juga berkurang dan cahaya tampak lebih redup. Sebaliknya, peningkatan arus listrik akan memperbanyak proses tersebut, sehingga cahaya yang dipancarkan menjadi lebih terang.</p>
+      <p>Besarnya arus yang masuk ke setiap sub piksel diatur oleh Thin Film Transistor (TFT) yang terletak di belakang piksel. Komponen ini berperan sebagai pengendali aliran listrik, sehingga tingkat kecerahan dapat disesuaikan secara akurat. Dengan mekanisme tersebut, layar OLED mampu menampilkan variasi warna dan intensitas cahaya yang sesuai dengan gambar yang ditampilkan.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="thin film transistor array|TFT LCD pixel microscope|TFT display transistor" alt="Susunan transistor film tipis (TFT) di balik piksel"></div>
+        <p class="fig-note">Susunan transistor film tipis (TFT) pada layar.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h3>Kelebihan dan Keterbatasan</h3>
+      <p>Karena setiap piksel pada OLED dapat memancarkan cahayanya sendiri, teknologi ini tidak memerlukan lampu latar seperti LCD. Akibatnya, panel OLED dapat dibuat sangat tipis, ringan, bahkan fleksibel, sehingga memungkinkan pengembangan perangkat dengan layar lipat. Selain itu, kemampuan mematikan piksel secara individual menghasilkan tingkat kontras yang tinggi dan warna hitam yang lebih pekat.</p>
+      <p>Meskipun memiliki banyak keunggulan, OLED juga memiliki beberapa keterbatasan. Material organik yang digunakan cenderung mengalami degradasi seiring waktu, terutama pada komponen yang menghasilkan warna biru. Kondisi ini dapat menyebabkan munculnya efek burn-in atau bayangan gambar ketika suatu tampilan statis ditampilkan dalam waktu yang lama. Oleh karena itu, para peneliti dan insinyur terus mengembangkan material serta teknik baru untuk meningkatkan ketahanan dan umur pakai layar OLED.</p>
+
+      <figure class="my-8 not-prose">
+        <div class="ratio169 rounded-2xl shadow-soft"><img data-commons="flexible OLED display|curved OLED display|OLED TV" alt="Layar OLED fleksibel dan tipis"></div>
+        <p class="fig-note">Contoh layar OLED yang tipis dan ringan.</p>
+        <figcaption class="img-credit mt-2" data-credit></figcaption>
+      </figure>
+
+      <h2>Mengapa Ini Penting</h2>
+      <h3>Penutup: Cahaya yang Lahir dari Loncatan Elektron</h3>
+      <p>Ketika layar OLED beroperasi, elektron terus bergerak menuju tingkat energi yang lebih rendah. Dalam proses tersebut, energi yang dilepaskan diubah menjadi foton atau partikel cahaya. Jutaan hingga milyaran proses kecil ini terjadi secara bersamaan, sehingga layar dapat menampilkan gambar dan warna yang kita lihat setiap hari.</p>
+      <p>Teknologi OLED merupakan salah satu penerapan nyata konsep fisika kuantum. Prinsip tentang tingkat energi elektron, foton, dan sifat material yang dahulu hanya dipelajari secara teoritis kini dimanfaatkan dalam berbagai perangkat modern, seperti ponsel, televisi, dan jam tangan pintar. Oleh karena itu, setiap tampilan warna dan gambar pada layar OLED sebenarnya merupakan hasil dari proses mikroskopis yang berlangsung secara teratur di dalam material penyusunnya.</p>
+
+      <h2>Ringkasan Konsep</h2>
+      <div class="summary-box">
+        <ul>
+          <li><strong>Piksel mandiri:</strong> OLED tidak memakai lampu latar, sehingga piksel yang mati benar-benar tidak memancarkan cahaya.</li>
+          <li><strong>Elektroluminesensi:</strong> elektron mengisi lubang di lapisan organik dan melepaskan energi sebagai foton.</li>
+          <li><strong>Warna:</strong> ditentukan energi foton dan material organik; tiga subpiksel merah, hijau, dan biru dicampur.</li>
+          <li><strong>Kecerahan:</strong> diatur besar arus listrik yang dikendalikan TFT di belakang piksel.</li>
+          <li><strong>Keterbatasan:</strong> material organik, terutama biru, dapat terdegradasi dan memicu burn-in.</li>
+        </ul>
+      </div>
+
+      <h2>Referensi</h2>
+      <ul class="refs">
+        <li>Halliday, D., Resnick, R., &amp; Walker, J. Fundamentals of Physics (bab Fisika Kuantum dan Atom). Wiley.</li>
+        <li>Tang, C. W., &amp; VanSlyke, S. A. (1987). “Organic electroluminescent diodes.” Applied Physics Letters, 51(12). (Makalah perintis OLED.)</li>
+        <li>HyperPhysics, Georgia State University. “Light Emitting Diodes (LED).” hyperphysics.phy-astr.gsu.edu.</li>
+        <li>Nobel Prize Outreach. “The Nobel Prize in Chemistry 2000: Conductive Polymers.” nobelprize.org.</li>
+      </ul>
+    </div>
+
+    <div class="mt-12 pt-8 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
+      <a href="#/jelajah" data-link class="btn btn-outline"><i data-lucide="arrow-left"></i> Kembali ke Jelajah</a>
+      <a href="#/artikel/1" data-link class="btn btn-primary">Kembali ke artikel pertama <i data-lucide="arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="bg-navy-deep text-slate-300 border-t border-white/10">
+  <div class="max-w-6xl mx-auto px-5 py-12 grid md:grid-cols-3 gap-10">
+    <div>
+      <a href="#/" data-link class="flex items-center gap-2.5 text-white">
+        <span class="text-accent"><i data-lucide="atom" class="!w-8 !h-8"></i></span>
+        <span class="font-display font-extrabold tracking-[.18em]">PHYSORA</span>
+      </a>
+      <p class="mt-4 text-sm leading-relaxed text-slate-400">Membaca teknologi melalui fisika. Ruang belajar dan eksplorasi sains untuk rasa ingin tahu sehari-hari.</p>
+    </div>
+    <div>
+      <h2 class="font-display font-bold text-white text-sm tracking-wider uppercase">Tautan cepat</h2>
+      <ul class="mt-4 grid gap-2.5 text-sm">
+        <li><a href="#/" data-link class="hover:text-white">Beranda</a></li>
+        <li><a href="#/jelajah" data-link class="hover:text-white">Jelajah</a></li>
+        <li><a href="#/tentang" data-link class="hover:text-white">Tentang Kami</a></li>
+        <li><a href="#/referensi" data-link class="hover:text-white">Referensi</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="font-display font-bold text-white text-sm tracking-wider uppercase">Catatan</h2>
+      <p class="mt-4 text-sm leading-relaxed text-slate-400">Materi di situs ini adalah bahan edukasi dan titik awal belajar, bukan pengganti sumber akademik.</p>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-5 py-5 text-xs text-slate-500 flex flex-wrap justify-between gap-2">
+      <span>&copy; 2026 Kelompok 6. Hak cipta dilindungi.</span>
+      <span>Tugas kuliah: PHYSORA</span>
+    </div>
+  </div>
+</footer>
+
+<div id="morph" aria-hidden="true"><div class="ring"><i data-lucide="atom"></i></div></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Router (History API) ---------- */
+  var routes = {
+    '/': 'page-home',
+    '/jelajah': 'page-jelajah',
+    '/tentang': 'page-tentang',
+    '/referensi': 'page-referensi',
+    '/artikel/1': 'page-artikel-1',
+    '/artikel/2': 'page-artikel-2',
+    '/artikel/3': 'page-artikel-3'
+  };
+  var navMap = { '/artikel/1': '/jelajah', '/artikel/2': '/jelajah', '/artikel/3': '/jelajah' };
+  var current = null;
+  var busy = false;
+  var morph = document.getElementById('morph');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function pathFromHash() {
+    var h = (location.hash || '').replace(/^#/, '');
+    if (!h) h = '/';
+    return routes[h] ? h : '/';
+  }
+
+  function setMeta(sel, val) {
+    var m = document.querySelector(sel);
+    if (m && val) m.setAttribute('content', val);
+  }
+
+  function swap(path) {
+    var pages = document.querySelectorAll('.page');
+    pages.forEach(function (p) { p.classList.remove('is-active', 'is-entering'); });
+    var el = document.getElementById(routes[path]);
+    el.classList.add('is-active');
+    if (!reduce) {
+      void el.offsetWidth;
+      el.classList.add('is-entering');
+      setTimeout(function () { el.classList.remove('is-entering'); }, 700);
+    }
+    current = path;
+    var pageTitle = el.getAttribute('data-title') || 'PHYSORA';
+    var pageDesc = el.getAttribute('data-description') || '';
+    document.title = pageTitle;
+    setMeta('meta[name="description"]', pageDesc);
+    setMeta('meta[property="og:title"]', pageTitle);
+    setMeta('meta[property="og:description"]', pageDesc);
+    window.scrollTo(0, 0);
+    var navPath = navMap[path] || path;
+    document.querySelectorAll('.nav-link[data-link]').forEach(function (a) {
+      var target = a.getAttribute('href').replace(/^#/, '') || '/';
+      if (target === navPath) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    var h1 = el.querySelector('h1');
+    if (h1) h1.focus({ preventScroll: true });
+    closeMenu();
+  }
+
+  function runMorph(x, y, done) {
+    var r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 40;
+    morph.style.display = 'block';
+    var grow = morph.animate(
+      [{ clipPath: 'circle(0px at ' + x + 'px ' + y + 'px)' }, { clipPath: 'circle(' + r + 'px at ' + x + 'px ' + y + 'px)' }],
+      { duration: 460, easing: 'cubic-bezier(.7,0,.2,1)', fill: 'forwards' }
+    );
+    grow.onfinish = function () {
+      done();
+      var cx = innerWidth / 2, cy = innerHeight * 0.38;
+      var shrink = morph.animate(
+        [{ clipPath: 'circle(' + r + 'px at ' + cx + 'px ' + cy + 'px)' }, { clipPath: 'circle(0px at ' + cx + 'px ' + cy + 'px)' }],
+        { duration: 520, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'forwards' }
+      );
+      shrink.onfinish = function () {
+        morph.style.display = 'none';
+        grow.cancel(); shrink.cancel();
+        busy = false;
+      };
+    };
+  }
+
+  function navigate(path, ev, fromPop) {
+    if (!routes[path]) path = '/';
+    if (path === current && !fromPop) { closeMenu(); return; }
+    if (!fromPop) {
+      try { history.pushState({ path: path }, '', '#' + path); } catch (e) { /* ignore */ }
+    }
+    if (busy || fromPop || reduce || current === null) {
+      swap(path);
+      return;
+    }
+    busy = true;
+    var x = innerWidth / 2, y = innerHeight / 2;
+    if (ev && typeof ev.clientX === 'number' && (ev.clientX || ev.clientY)) { x = ev.clientX; y = ev.clientY; }
+    else if (ev && ev.currentTarget && ev.currentTarget.getBoundingClientRect) {
+      var b = ev.currentTarget.getBoundingClientRect(); x = b.left + b.width / 2; y = b.top + b.height / 2;
+    }
+    runMorph(x, y, function () { swap(path); });
+  }
+
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-link]');
+    if (!a) return;
+    e.preventDefault();
+    var path = (a.getAttribute('href') || '').replace(/^#/, '') || '/';
+    var topic = a.getAttribute('data-topic');
+    if (topic) applyFilter(topic);
+    else if (path === '/jelajah' && a.closest('#page-home') === null) { /* keep filter */ }
+    navigate(path, e);
+  });
+
+  window.addEventListener('popstate', function () {
+    navigate(pathFromHash(), null, true);
+  });
+
+  /* ---------- Mobile menu ---------- */
+  var burger = document.getElementById('burger');
+  var menu = document.getElementById('mobile-menu');
+  function closeMenu() {
+    menu.classList.remove('open');
+    burger.setAttribute('aria-expanded', 'false');
+    burger.setAttribute('aria-label', 'Buka menu');
+  }
+  burger.addEventListener('click', function () {
+    var open = !menu.classList.contains('open');
+    menu.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+    burger.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+  window.addEventListener('resize', function () { if (innerWidth >= 768) closeMenu(); });
+
+  /* ---------- Explore filter ---------- */
+  var chips = document.querySelectorAll('#filters .chip');
+  var cards = document.querySelectorAll('#article-grid [data-cat]');
+  var empty = document.getElementById('empty-state');
+  function applyFilter(f) {
+    var shown = 0;
+    chips.forEach(function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-filter') === f)); });
+    cards.forEach(function (c) {
+      var ok = f === 'all' || c.getAttribute('data-cat') === f;
+      c.style.display = ok ? '' : 'none';
+      if (ok) shown++;
+    });
+    empty.classList.toggle('hidden', shown !== 0);
+  }
+  chips.forEach(function (c) { c.addEventListener('click', function () { applyFilter(c.getAttribute('data-filter')); }); });
+  document.querySelector('[data-filter-reset]').addEventListener('click', function () { applyFilter('all'); });
+
+  /* ---------- Interactive SVG atom ---------- */
+  (function () {
+    var svg = document.getElementById('orbit');
+    var els = svg.querySelectorAll('.electron');
+    var caption = document.getElementById('orbit-caption');
+    var go = document.getElementById('orbit-go');
+    var topics = [
+      { name: 'Cahaya & Optik', key: 'optik' },
+      { name: 'Gelombang & Komunikasi', key: 'gelombang' },
+      { name: 'Elektronika', key: 'elektronika' }
+    ];
+    var rx = 165, ry = 60, speed = 1, target = 1;
+    var phase = [0, 2.1, 4.2];
+    function draw() {
+      els.forEach(function (el, i) {
+        el.setAttribute('cx', 200 + rx * Math.cos(phase[i]));
+        el.setAttribute('cy', 200 + ry * Math.sin(phase[i]));
+      });
+    }
+    draw();
+    if (!reduce) {
+      var last = performance.now();
+      (function loop(t) {
+        var dt = Math.min(0.05, (t - last) / 1000); last = t;
+        speed += (target - speed) * 0.08;
+        for (var i = 0; i < 3; i++) phase[i] += dt * speed * (0.9 + i * 0.35);
+        draw();
+        requestAnimationFrame(loop);
+      })(last);
+    }
+    svg.addEventListener('pointerenter', function () { target = 3; });
+    svg.addEventListener('pointerleave', function () { target = 1; });
+    function pick(i) {
+      caption.textContent = 'Topik: ' + topics[i].name;
+      go.classList.remove('hidden');
+      go.setAttribute('data-topic', topics[i].key);
+    }
+    els.forEach(function (el) {
+      var i = +el.getAttribute('data-i');
+      el.addEventListener('click', function () { pick(i); });
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(i); } });
+    });
+  })();
+
+  /* ---------- Images from Wikimedia Commons (free licenses) ---------- */
+  var cache = {};
+  var usedTitles = {};
+  function stripHtml(s) {
+    var d = new DOMParser().parseFromString(s || '', 'text/html');
+    return (d.body.textContent || '').trim();
+  }
+  function okLicense(name) {
+    if (!name) return false;
+    if (/NC|ND/i.test(name)) return false;
+    return /^(CC|Public domain|PD|CC0)/i.test(name);
+  }
+  function foreignRisk(title) {
+    var t = title.replace(/^File:/, '');
+    if (/[^\x00-\x7F]/.test(t)) return true;
+    return /[-_ ](de|fr|es|ru|ja|zh|ko|ar|hi|te|ta|bn|pt|it|nl|pl|tr|vi|th|ur|fa|he|uk|sv|cs|hu|ro|el|ml|kn|mr|gu|pa|ne|si|my|km|lo|sq|bg|sr|hr|sk|sl|lt|lv|et|fi|da|no|nb|nn|ca|gl|eu|ms|tl|sw)\.(svg|png|jpe?g|gif)$/i.test(t);
+  }
+  function fetchCommons(q) {
+    var key = 'multi:' + q;
+    if (cache[key]) return cache[key];
+    cache[key] = q.split('|').reduce(function (p, one) {
+      return p.then(function (r) { return r || fetchOne(one.trim()); });
+    }, Promise.resolve(null));
+    return cache[key];
+  }
+  function fetchOne(query) {
+    if (cache[query]) return cache[query];
+    var isFile = /^file:/i.test(query);
+    var url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*' +
+      (isFile
+        ? '&titles=' + encodeURIComponent(query)
+        : '&generator=search&gsrnamespace=6&gsrlimit=25&gsrsearch=' + encodeURIComponent(query + ' filetype:bitmap|drawing')) +
+      '&prop=imageinfo&iiprop=url|extmetadata|mime|size&iiurlwidth=1280';
+    cache[query] = fetch(url).then(function (r) { return r.json(); }).then(function (data) {
+      var pages = data && data.query && data.query.pages ? Object.keys(data.query.pages).map(function (k) { return data.query.pages[k]; }) : [];
+      pages.sort(function (a, b) { return a.index - b.index; });
+      for (var i = 0; i < pages.length; i++) {
+        var p = pages[i], ii = p.imageinfo && p.imageinfo[0];
+        if (!ii || !ii.thumburl || !/^image\/(jpeg|png|svg\+xml)$/.test(ii.mime)) continue;
+        var isVec = ii.mime === 'image/svg+xml';
+        if ((!isVec && ii.width < 640) || usedTitles[p.title] || foreignRisk(p.title)) continue;
+        var m = ii.extmetadata || {};
+        var lic = m.LicenseShortName && m.LicenseShortName.value;
+        if (!okLicense(lic)) continue;
+        usedTitles[p.title] = true;
+        return {
+          src: ii.thumburl,
+          page: ii.descriptionurl,
+          license: lic,
+          licenseUrl: m.LicenseUrl && m.LicenseUrl.value,
+          artist: stripHtml(m.Artist && m.Artist.value) || 'Kreator tidak dicantumkan',
+          diagram: ii.mime !== 'image/jpeg',
+          title: p.title.replace(/^File:/, '')
+        };
+      }
+      return null;
+    }).catch(function () { return null; });
+    return cache[query];
+  }
+  function setCredit(el, info) {
+    el.textContent = '';
+    if (!info) { el.textContent = 'Gambar tidak dapat dimuat dari Wikimedia Commons saat ini.'; return; }
+    el.appendChild(document.createTextNode('Foto: ' + info.artist.slice(0, 70) + ' · '));
+    var l = document.createElement('a');
+    l.href = info.licenseUrl || info.page; l.target = '_blank'; l.rel = 'noopener noreferrer'; l.textContent = info.license;
+    el.appendChild(l);
+    el.appendChild(document.createTextNode(' · '));
+    var s = document.createElement('a');
+    s.href = info.page; s.target = '_blank'; s.rel = 'noopener noreferrer'; s.textContent = 'Wikimedia Commons';
+    el.appendChild(s);
+  }
+  function loadAllImages() {
+    var imgs = Array.prototype.slice.call(document.querySelectorAll('img[data-commons]'));
+    var queries = [];
+    imgs.forEach(function (im) { var q = im.getAttribute('data-commons'); if (queries.indexOf(q) < 0) queries.push(q); });
+    queries.reduce(function (chain, q) {
+      return chain.then(function () {
+        return fetchCommons(q).then(function (info) {
+          imgs.filter(function (im) { return im.getAttribute('data-commons') === q; }).forEach(function (im) {
+            var holder = im.closest('figure, article');
+            var credit = holder ? holder.querySelector('[data-credit]') : null;
+            if (credit) setCredit(credit, info);
+            if (info) {
+              if (info.diagram) im.classList.add('diagram');
+              im.onload = function () { im.classList.add('loaded'); };
+              im.src = info.src;
+              im.loading = 'lazy';
+              im.referrerPolicy = 'no-referrer';
+            }
+          });
+        });
+      });
+    }, Promise.resolve());
+  }
+
+  /* ---------- Slider Peta Topik ---------- */
+  function initTopicSlider() {
+    var slider = document.getElementById('topic-map');
+    var dotsWrap = document.getElementById('topic-dots');
+    if (!slider || !dotsWrap) return;
+    var cards = slider.querySelectorAll('.topic-card');
+    var dots = [];
+    var ticking = false;
+    var smooth = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    Array.prototype.forEach.call(cards, function (card, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'topic-dot';
+      b.setAttribute('aria-label', 'Kartu ' + (i + 1) + ' dari ' + cards.length);
+      b.addEventListener('click', function () {
+        var pad = parseFloat(getComputedStyle(slider).paddingLeft) || 0;
+        slider.scrollTo({ left: card.offsetLeft - pad, behavior: smooth });
+      });
+      dotsWrap.appendChild(b);
+      dots.push(b);
+    });
+    function update() {
+      ticking = false;
+      if (cards.length < 2) return;
+      var step = cards[1].offsetLeft - cards[0].offsetLeft;
+      var max = slider.scrollWidth - slider.clientWidth;
+      var idx = slider.scrollLeft >= max - 4 ? cards.length - 1 : Math.round(slider.scrollLeft / step);
+      idx = Math.max(0, Math.min(cards.length - 1, idx));
+      dots.forEach(function (d, i) { d.setAttribute('aria-current', i === idx ? 'true' : 'false'); });
+    }
+    slider.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+
+  /* ---------- Init ---------- */
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.lucide) lucide.createIcons();
+    initTopicSlider();
+    var start = pathFromHash();
+    try { history.replaceState({ path: start }, '', '#' + start); } catch (e) { /* ignore */ }
+    swap(start);
+    loadAllImages();
+  });
+})();
+</script>
+</body>
+</html>
